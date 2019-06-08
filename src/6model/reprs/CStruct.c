@@ -170,6 +170,12 @@ static void compute_allocation_strategy(MVMThreadContext *tc, MVMObject *repr_in
                     "Only one dimensions supported in CStruct attribute");
             }
 
+            if (inlined && !STABLE(type)->REPR_data) {
+                MVM_gc_allocate_gen2_default_clear(tc);
+                MVM_exception_throw_adhoc(tc,
+                    "Can't inline a type into a CStruct before the end of its definition");
+            }
+
             if (!MVM_is_null(tc, type)) {
                 /* See if it's a type that we know how to handle in a C struct. */
                 const MVMStorageSpec *spec = REPR(type)->get_storage_spec(tc, STABLE(type));

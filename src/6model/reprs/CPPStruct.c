@@ -169,6 +169,11 @@ static void compute_allocation_strategy(MVMThreadContext *tc, MVMSTable *st,
                     "Only one dimensions supported in CPPStruct attribute");
             }
 
+            if (inlined && !STABLE(type)->REPR_data) {
+                MVM_exception_throw_adhoc(tc,
+                    "CPPStruct: can't inline an attribute before its type's definition");
+            }
+
             if (!MVM_is_null(tc, type)) {
                 /* See if it's a type that we know how to handle in a C struct. */
                 const MVMStorageSpec *spec = REPR(type)->get_storage_spec(tc, STABLE(type));
